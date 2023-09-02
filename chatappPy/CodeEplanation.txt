@@ -1,0 +1,173 @@
+Server Code (chat_server.py):
+
+    Importing Libraries:
+
+    python
+
+import socket
+import threading
+
+    We import the socket library to handle network communication.
+    We import threading to create separate threads for handling multiple clients simultaneously.
+
+Creating a Socket:
+
+python
+
+server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+    We create a socket object for the server using IPv4 (AF_INET) and TCP (SOCK_STREAM) protocol.
+
+Defining Host and Port:
+
+python
+
+host = '127.0.0.1'
+port = 12345
+
+    We define the host (IP address) and port number to which the server will bind.
+
+Binding the Server:
+
+python
+
+server_socket.bind((host, port))
+
+    We bind the server to the specified host and port.
+
+Listening for Connections:
+
+python
+
+server_socket.listen()
+
+    We make the server listen for incoming client connections.
+
+Handling Multiple Clients:
+
+python
+
+clients = []
+
+    We maintain a list clients to store all connected client sockets.
+
+Broadcasting Messages:
+
+python
+
+def broadcast(message, client_socket):
+    # Iterate through all connected clients
+    for client in clients:
+        if client != client_socket:
+            try:
+                client.send(message)
+            except:
+                # Remove the client if unable to send message
+                clients.remove(client)
+
+    The broadcast function sends a message to all connected clients except the sender.
+
+Handling Client Connections:
+
+python
+
+def handle_client(client_socket):
+    while True:
+        try:
+            message = client_socket.recv(1024)
+            if not message:
+                break
+            broadcast(message, client_socket)
+        except:
+            # Remove the client if an error occurs
+            clients.remove(client_socket)
+            break
+
+    The handle_client function handles a client's connection by receiving and broadcasting messages.
+
+Main Server Loop:
+
+python
+
+    while True:
+        client_socket, client_address = server_socket.accept()
+        print(f"Accepted connection from {client_address[0]}:{client_address[1]}")
+        
+        # Add the client to the list
+        clients.append(client_socket)
+        
+        # Create a thread to handle the client
+        client_thread = threading.Thread(target=handle_client, args=(client_socket,))
+        client_thread.start()
+
+        In the main loop, the server accepts incoming connections, adds clients to the list, and starts a separate thread to handle each client's messages.
+
+Client Code (chat_client.py):
+
+The client code is similar to the server code but adapted for the client-side interaction.
+
+    Creating a Socket:
+
+    python
+
+client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+Defining Server Host and Port:
+
+python
+
+host = '127.0.0.1'
+port = 12345
+
+Connecting to the Server:
+
+python
+
+client_socket.connect((host, port))
+
+    The client socket connects to the server using the specified host and port.
+
+Sending and Receiving Messages:
+
+python
+
+def send_message():
+    while True:
+        message = input()
+        client_socket.send(message.encode('utf-8'))
+
+python
+OBOBOB
+def receive_message():
+    while True:
+        try:
+            message = client_socket.recv(1024)
+            print(message.decode('utf-8'))
+        except:
+            # An error occurred, likely the server closed the connection
+            print("Connection closed.")
+            break
+
+    The send_message function sends user input to the server.
+    The receive_message function receives and displays messages from the server.
+
+Creating Threads for Sending and Receiving:
+
+python
+
+send_thread = threading.Thread(target=send_message)
+receive_thread = threading.Thread(target=receive_message)
+
+    Two threads are created to simultaneously send and receive messages.
+
+Starting the Threads:
+
+python
+
+    send_thread.start()
+    receive_thread.start()
+
+        The threads are started to handle sending and receiving messages concurrently.
+
+This basic chat application allows multiple clients to connect to the server and send messages to each other. Messages are broadcasted to all connected clients. To use it, you run the server, then run one or more client instances in separate terminals to simulate a chat environment.
+
