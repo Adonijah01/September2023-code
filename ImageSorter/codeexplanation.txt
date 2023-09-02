@@ -1,0 +1,72 @@
+import os
+import sys
+from datetime import datetime
+
+    The script starts by importing the necessary libraries:
+        os: This library provides functions for working with the operating system, including file and directory operations.
+        sys: This library provides access to command-line arguments and other system-related functionality.
+        datetime: This library allows you to work with date and time objects.
+
+python
+
+def sort_images_by_date(directory):
+    try:
+
+    Next, a function named sort_images_by_date is defined. This function takes a single argument, directory, which represents the path to the directory where your image files are located.
+
+python
+
+        # List all files in the specified directory
+        all_files = os.listdir(directory)
+
+    The function begins by using os.listdir(directory) to list all files and directories in the specified directory. The result is stored in the all_files variable.
+
+python
+
+        # Filter for image files (you can customize this to match your file extensions)
+        image_files = [file for file in all_files if file.lower().endswith(('.jpg', '.jpeg', '.png', '.gif'))]
+
+    The script then filters the all_files list to include only image files. It does this by iterating through the files in all_files and checking if their names end with common image file extensions (e.g., .jpg, .jpeg, .png, .gif). The filtered image files are stored in the image_files list.
+
+python
+
+        # Create a list of (file, modification_time) tuples
+        file_mod_times = [(file, os.path.getmtime(os.path.join(directory, file))) for file in image_files]
+
+    The script creates a list of tuples, file_mod_times, where each tuple contains the file name and its modification timestamp. It uses os.path.getmtime() to retrieve the modification timestamp for each image file.
+
+python
+
+        # Sort the list by modification time (newest to oldest)
+        file_mod_times.sort(key=lambda x: x[1], reverse=True)
+
+    The file_mod_times list is then sorted based on the second element of each tuple, which is the modification timestamp. The key=lambda x: x[1] lambda function is used to extract the timestamp for sorting, and reverse=True sorts the list in descending order (newest to oldest).
+
+python
+
+        # Display the sorted files
+        for file, mod_time in file_mod_times:
+            formatted_time = datetime.fromtimestamp(mod_time).strftime('%Y-%m-%d %H:%M:%S')
+            print(f"File: {file}, Modified Time: {formatted_time}")
+
+    Finally, the script iterates through the sorted file_mod_times list. For each image file, it formats the modification timestamp as a human-readable date and time using datetime.fromtimestamp(mod_time).strftime('%Y-%m-%d %H:%M:%S'). It then prints the file name and the formatted modification time.
+
+python
+
+    except FileNotFoundError:
+        print("Directory not found.")
+
+    The code within the try block is wrapped in a try-except block to handle potential errors. If the specified directory does not exist or cannot be found, a FileNotFoundError is raised. In this case, the script prints "Directory not found."
+
+python
+
+if __name__ == "__main__":
+    if len(sys.argv) != 2:
+        print("Usage: python image_date_sort.py /path/to/your/images")
+    else:
+        directory = sys.argv[1]
+        sort_images_by_date(directory)
+
+    The script checks if it is being run as the main program using the if __name__ == "__main__": block. If it is the main program:
+        It verifies that exactly two command-line arguments are provided (the script's name and the directory path).
+        If the correct number of arguments is provided, it retrieves the directory path from sys.argv[1] (the second argument) and calls the sort_images_by_date(directory) function with the provided directory path as an argument.
