@@ -1,0 +1,21 @@
+[
+    {
+        "title": "Complete Python project",
+        "due_date": "2023-09-10",
+        "priority": 3,
+        "completed": false
+    },
+    {
+        "title": "Buy groceries",
+        "due_date": "2023-09-06",
+        "priority": 2,
+        "completed": false
+    },
+    {
+        "title": "Read a book",
+        "due_date": "2023-09-15",
+        "priority": 1,
+        "completed": true
+    }
+]
+
