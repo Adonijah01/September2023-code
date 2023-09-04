@@ -1,0 +1,92 @@
+Loading and Saving Tasks
+
+python
+Copy code
+# Load tasks from a JSON file if it exists
+def load_tasks():
+    try:
+        with open("tasks.json", "r") as file:
+            return json.load(file)
+    except FileNotFoundError:
+        return []
+
+# Save tasks to a JSON file
+def save_tasks():
+    with open("tasks.json", "w") as file:
+        json.dump(tasks, file)
+The load_tasks function attempts to load tasks from a JSON file named "tasks.json" if it exists. If the file is not found, it returns an empty list.
+The save_tasks function saves the tasks list to the "tasks.json" file using JSON serialization.
+Adding a Task
+
+python
+Copy code
+def add_task():
+    title = input("Enter task title: ")
+    due_date = input("Enter due date (YYYY-MM-DD): ")
+    priority = int(input("Enter priority (1 - low, 2 - medium, 3 - high): "))
+    task = {
+        "title": title,
+        "due_date": due_date,
+        "priority": priority,
+        "completed": False
+    }
+    tasks.append(task)
+    print("Task added successfully!")
+The add_task function collects user input for the task's title, due date, and priority. It then creates a dictionary representing the task and adds it to the tasks list.
+Viewing Tasks
+
+python
+Copy code
+def view_tasks():
+    if not tasks:
+        print("No tasks found.")
+        return
+
+    tasks.sort(key=lambda x: (x["completed"], x["priority"], x["due_date"]))
+    print("Task List:")
+    for idx, task in enumerate(tasks, start=1):
+        status = "Completed" if task["completed"] else "Incomplete"
+        print(f"{idx}. Title: {task['title']} | Due Date: {task['due_date']} | Priority: {task['priority']} | Status: {status}")
+The view_tasks function displays a sorted list of tasks. It first checks if the tasks list is empty and, if so, informs the user.
+Tasks are sorted by completion status, priority, and due date, and then displayed with their details.
+Marking a Task as Complete
+
+python
+Copy code
+def mark_task_complete():
+    view_tasks()
+    task_number = int(input("Enter the number of the task to mark as complete: ")) - 1
+
+    if 0 <= task_number < len(tasks):
+        tasks[task_number]["completed"] = True
+        print("Task marked as complete.")
+    else:
+        print("Invalid task number.")
+The mark_task_complete function allows users to mark a task as complete. It displays the list of tasks and prompts the user to select a task by its number.
+If a valid task number is entered, the corresponding task's "completed" status is set to True.
+Deleting a Task
+
+python
+Copy code
+def delete_task():
+    view_tasks()
+    task_number = int(input("Enter the number of the task to delete: ")) - 1
+
+    if 0 <= task_number < len(tasks):
+        deleted_task = tasks.pop(task_number)
+        print(f"Task '{deleted_task['title']}' deleted.")
+    else:
+        print("Invalid task number.")
+The delete_task function allows users to delete a task. It displays the list of tasks and prompts the user to select a task by its number.
+If a valid task number is entered, the corresponding task is removed from the tasks list.
+Main Program Loop
+
+python
+Copy code
+def main():
+    tasks.extend(load_tasks())
+
+    while True:
+        # ... (menu and user interaction)
+The main function is the entry point of the program. It loads tasks from the JSON file, enters a loop to display a menu, and allows users to interact with the application.
+These are the main components of the To-Do List application code. The program's functionality revolves around these functions, enabling users to manage tasks effectively.
